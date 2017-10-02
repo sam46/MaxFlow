@@ -1,0 +1,25 @@
+8 15
+A 0 0
+B 2 2
+C 2 0
+D 2 -2
+E 4 2
+F 4 0
+G 4 -2
+H 6 0
+A B 10
+A C 5
+A D 15
+B E 9
+B C 4
+B F 15
+C F 8
+C D 4
+G C 6
+D G 16
+E F 15
+E H 10
+F H 10
+F G 15
+G H 10
+A H

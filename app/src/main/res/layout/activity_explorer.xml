@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ExplorerActivity">
+
+    <GridView
+        android:id="@+id/gv"
+        android:layout_width="366dp"
+        android:layout_height="wrap_content"
+        android:columnWidth="100dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        tools:layout_editor_absoluteX="9dp"
+        tools:layout_editor_absoluteY="-27dp" />
+
+    <!--<Button-->
+        <!--android:id="@+id/open_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Load Graph"-->
+        <!--tools:layout_editor_absoluteX="132dp"-->
+        <!--tools:layout_editor_absoluteY="447dp" />-->
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- view for AdMob Banner Ad -->
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
+
+    <Button
+        android:id="@+id/solver_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Solve: Step-by-step"
+        android:layout_above="@+id/rand_btn"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/rand_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Random graph"
+        android:layout_alignBottom="@+id/editor_btn"
+        android:layout_alignStart="@+id/editor_btn"
+        android:layout_marginBottom="46dp" />
+
+    <Button
+        android:id="@+id/editor_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Graph"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/explorer_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Graph"
+        android:layout_above="@+id/rand_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp" />
+
+</RelativeLayout>
