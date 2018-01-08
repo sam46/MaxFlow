@@ -2,11 +2,6 @@ package com.bbot.maxflow;
 
 import android.graphics.Canvas;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +18,9 @@ import algos.FordFulkerson;
 /**
  * Actual on-screen interactive graph
  */
-public class MyGraph {
+public class FlowGraph {
+    private FlowGraphEntity serialized;
+
     private Clickable focusElem;
     private double minX, minY, maxX, maxY;
     private Map<String, FlowVertex> verts;
@@ -32,43 +29,49 @@ public class MyGraph {
     private int n;
     private float xrange, yrange;
     private float cx, cy;
-    /*  Ford Fulkerson Stuff  */
+    /*  Ford-Fulkerson Stuff  */
     private FFFlowNetwork fordNet;
     private Map<String, Integer> idToInt = new HashMap<>();
     private Map<Integer, String> intToId = new HashMap<>();
     private int curV = 0;
     private int stateNum = 0, maxStateNum = 0;
 
+    FlowGraph(String serialized) {
+        this(serialized, "unnamed");
+    }
 
-    MyGraph(String path) {
+    FlowGraph(FlowGraphEntity serialized) {
+        this(serialized.getSerialized(), serialized.getName());
+        this.serialized.setId(serialized.getId());
+    }
+
+    FlowGraph(String serialized, String name) {
         maxY = Double.MIN_VALUE;
         minY = Double.MAX_VALUE;
         minX = minY;
         maxX = maxY;
         verts = new HashMap<>();
         edges = new HashMap<>();
+        this.serialized = new FlowGraphEntity(name, serialized);
 
         try {
-            FileReader fr = new FileReader(path);
-            BufferedReader reader = new BufferedReader(fr);
-
-            StringTokenizer st = new StringTokenizer(reader.readLine());
+            StringTokenizer reader = new StringTokenizer(serialized, "\n", false);
+            StringTokenizer st = new StringTokenizer(reader.nextToken());
             n = Integer.parseInt(st.nextToken());
             int edgeNum = Integer.parseInt(st.nextToken());
             for (int i = 0; i < n; ++i) {
-                st = new StringTokenizer(reader.readLine());
+                st = new StringTokenizer(reader.nextToken());
                 addNode(st.nextToken(), Float.parseFloat(st.nextToken()), Float.parseFloat(st.nextToken()));
             }
             for (int i = 0; i < edgeNum; ++i) {
-                st = new StringTokenizer(reader.readLine());
+                st = new StringTokenizer(reader.nextToken());
                 String u = st.nextToken(), v = st.nextToken();
 //                if(!verts.containsKey(u) || !verts.containsKey(v)) throw new Exception();
                 addEdge(u, v, Integer.parseInt(st.nextToken()));
             }
-            st = new StringTokenizer(reader.readLine());
+            st = new StringTokenizer(reader.nextToken());
             src = verts.get(st.nextToken());
             sink = verts.get(st.nextToken());
-
 
         } catch (Exception e) {
             // Todo
@@ -98,12 +101,17 @@ public class MyGraph {
         recompute();
     }
 
+
+    FlowGraph(boolean auto) {
+        this(auto, "unnamed");
+    }
+
     /**
      * Actual on-screen interactive graph
      *
      * @param auto Generate a random auto-layed-out graph or use default sample graph
      */
-    MyGraph(boolean auto) {
+    FlowGraph(boolean auto, String name) {
         maxY = Double.MIN_VALUE;
         minY = Double.MAX_VALUE;
         minX = minY;
@@ -143,6 +151,8 @@ public class MyGraph {
         }
         n = verts.size();
         recompute();
+
+        this.serialized = new FlowGraphEntity(name, serialize());
     }
 
     public boolean isEmpty() {
@@ -406,35 +416,19 @@ public class MyGraph {
         n = verts.size();
     }
 
-    public String save() {
-        String name = null;
-        try {
-            name = "_tmp" + hashCode() + ".txt";
-            FileWriter fw = new FileWriter(name);
-            BufferedWriter writer = new BufferedWriter(fw);
-            PrintWriter pw = new PrintWriter(writer);
-            pw.println(n + " " + edges.size());
-            for (String k : verts.keySet()) {
-                FlowVertex fv = verts.get(k);
-                pw.println(fv.getID() + " " + (int) Math.round(fv.x) + " " + (int) Math.round(fv.y));
-            }
-
-            for (String k : edges.keySet()) {
-                FlowEdge fe = edges.get(k);
-                pw.println(fe.u.getID() + " " + fe.v.getID() + " " + fe.getCapacity());
-            }
-            pw.println(src.getID() + " " + sink.getID());
-        } catch (Exception e) {
-            // Todo
-
-
-            return null;
+    public String serialize() {
+        String tmp = "";
+        for (String k : verts.keySet()) {
+            FlowVertex fv = verts.get(k);
+            tmp += (fv.getID() + " " + (int) Math.round(fv.x) + " " + (int) Math.round(fv.y)) + "\n";
         }
-        return name;
+
+        for (String k : edges.keySet()) {
+            FlowEdge fe = edges.get(k);
+            tmp += (fe.u.getID() + " " + fe.v.getID() + " " + fe.getCapacity()) + "\n";
+        }
+
+        return tmp;
     }
 
-//    public String serialize() {
-//        Gson gson = new Gson();
-//
-//    }
 }

@@ -208,7 +208,7 @@ public class FlowEdge implements Clickable {
         txtBG.lineTo((float) boundbox[4][0] + bgH * backX + bgV * perpX, (float) boundbox[4][1] + bgH * backY + bgV * perpY);
         txtBG.moveTo((float) boundbox[4][0] - bgH * backX + bgV * perpX, (float) boundbox[4][1] - bgH * backY + bgV * perpY);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(MainPanel.bgColor);
+        paint.setColor(BasePanel.bgColor);
         canvas.drawPath(txtBG, paint);
 
         Paint tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

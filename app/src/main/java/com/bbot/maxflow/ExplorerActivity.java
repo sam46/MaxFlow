@@ -1,5 +1,6 @@
 package com.bbot.maxflow;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -8,7 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExplorerActivity extends AppCompatActivity {
+public class ExplorerActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,12 @@ public class ExplorerActivity extends AppCompatActivity {
             System.out.println(f.getName());
         }
         fnames.add("hello");
+        fnames.add("hello");
+        fnames.add("hello");
+        fnames.add("hello");
+        fnames.add("hello");
+        fnames.add("hello");
+
         System.out.println( getResources().getIdentifier("sample_graph.txt","Graphs",getPackageName())
         );
         final ArrayAdapter<String> gridViewArrayAdapter = new ArrayAdapter<String>

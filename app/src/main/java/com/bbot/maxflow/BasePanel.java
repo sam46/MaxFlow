@@ -14,9 +14,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.OverScroller;
 
-public class MainPanel extends SurfaceView implements SurfaceHolder.Callback {
+public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
     protected static int w, h;
-    protected static MyGraph graph;
+    protected static FlowGraph graph;
     protected static int bgColor = Color.WHITE;
     //    protected float zoom = 1.0f;
     private OverScroller mScroller;
@@ -63,7 +63,7 @@ public class MainPanel extends SurfaceView implements SurfaceHolder.Callback {
         @Override
         public void onLongPress(MotionEvent e) {
             super.onLongPress(e);
-            MainPanel.this.onLongPress(e);
+            BasePanel.this.onLongPress(e);
         }
 
         @Override
@@ -121,13 +121,13 @@ public class MainPanel extends SurfaceView implements SurfaceHolder.Callback {
 
     };
     //    Bitmap bmp;
-    private MainThread thread;
+    private PanelThread thread;
 
-    protected MainPanel(Context context) {
+    protected BasePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
-        graph = new MyGraph(false);
-        thread = new MainThread(getHolder(), this);
+        graph = new FlowGraph(false);
+        thread = new PanelThread(getHolder(), this);
 //        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         paint = new Paint();
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
@@ -145,7 +145,7 @@ public class MainPanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        thread = new MainThread(getHolder(), this);
+        thread = new PanelThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
     }
@@ -184,7 +184,7 @@ public class MainPanel extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
 //        canvas.drawColor(Color.WHITE);
-        canvas.drawColor(MainPanel.bgColor);
+        canvas.drawColor(BasePanel.bgColor);
 //        System.out.println(mat);
         canvas.save();
         canvas.setMatrix(cam.getMat());

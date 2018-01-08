@@ -8,14 +8,14 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-public class SolverPanel extends MainPanel {
+public class SolverPanel extends BasePanel {
     Bitmap prevBmp, nextBmp;
     RectF prevBtnRect, nextBtnRect;
     float btnsOffset = 50, bmpW, bmpH, scl = 2;
 
-    public SolverPanel(Context context, String path) {
+    public SolverPanel(Context context, String serialized) {
         super(context);
-        graph = new MyGraph(path);
+        graph = new FlowGraph(serialized);
         fit = true;
         prevBmp = BitmapFactory.decodeResource(getResources(), R.drawable.prev);
         nextBmp = BitmapFactory.decodeResource(getResources(), R.drawable.next);

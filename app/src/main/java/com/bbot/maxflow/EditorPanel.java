@@ -14,7 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-public class EditorPanel extends MainPanel {
+public class EditorPanel extends BasePanel {
     public EditText etext;
     Bitmap clearBmp, deleteBmp, addEdgeBmp, saveBmp, setSinkBmp, setSrcBmp, changeCapBmp;
     RectF clearRect, deleteRect, addEdgeRect, saveRect, setSinkRect, setSrcRect, changeCapRect;
@@ -28,12 +28,13 @@ public class EditorPanel extends MainPanel {
         super(context);
         System.out.println("Create!!");
 
-        graph = new MyGraph(false);
+        graph = new FlowGraph(false);
         etext = new EditText(context);
         setupEditText();
         setFocusable(true);
         setFocusableInTouchMode(true);
         requestFocus();
+
 //        this.setOnFocusChangeListener(new OnFocusChangeListener() {
 //            @Override
 //            public void onFocusChange(View v, boolean hasFocus) {
@@ -216,7 +217,7 @@ public class EditorPanel extends MainPanel {
                 synchronized (graph) {
                     if (enableClearBtn && clearRect.contains(x, y)) { // Non
                         deselect();
-                        graph = new MyGraph(false);
+                        graph = new FlowGraph(false);
                         deselect();
                         break;
                     } else if (enableSaveBtn && saveRect.contains(x, y)) {   // Non

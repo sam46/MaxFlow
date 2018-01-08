@@ -3,19 +3,19 @@ import android.view.SurfaceHolder;
 import android.graphics.Canvas;
 
 
-public class MainThread extends Thread {
+public class PanelThread extends Thread {
     public  static int MAX_FPS = 30;
     private double avgFPS;
     private SurfaceHolder surfaceHolder;
-    private MainPanel mainPanel;
+    private BasePanel basePanel;
     private boolean running;
     public static Canvas canvas;
 
 
-    public MainThread(SurfaceHolder holder, MainPanel mainPanel){
+    public PanelThread(SurfaceHolder holder, BasePanel basePanel){
         super();
         this.surfaceHolder = holder;
-        this.mainPanel = mainPanel;
+        this.basePanel = basePanel;
     }
 
     public void setRunning(boolean arg){
@@ -35,11 +35,11 @@ public class MainThread extends Thread {
             try {
                 canvas = surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
-                    this.mainPanel.update();
-                    this.mainPanel.draw(canvas);
+                    this.basePanel.update();
+                    this.basePanel.draw(canvas);
                 }
             } catch (Exception e) {
-                e.printStackTrace();;
+                e.printStackTrace();
             } finally {
                 if(canvas != null) {
                     try {

@@ -3,15 +3,22 @@ package com.bbot.maxflow;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import android.app.Activity;
+import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.room.Room;
+
+
+import android.arch.persistence.room.RoomDatabase;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends Activity {
+
     // Remove the below line after defining your own ad unit ID.
     private static final String TOAST_TEXT = "Test ads are being shown. "
             + "To show live ads, replace the ad unit ID in res/values/strings.xml with your own ad unit ID.";
@@ -56,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -77,5 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 }

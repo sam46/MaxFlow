@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="sample_graph">8 15\nA 0 0\nB 2 2\nC 2 0\nD 2 -2\nE 4 2\nF 4 0\nG 4 -2\nH 6 0\nA B 10\nA C 5\nA D 15\nB E 9\nB C 4\nB F 15\nC F 8\nC D 4\nG C 6\nD G 16\nE F 15\nE H 10\nF H 10\nF G 15\nG H 10\nA H\n</string>
     <!-- -
         This is an ad unit ID for a banner test ad. Replace with your own banner ad unit id.
         For more information, see https://support.google.com/admob/answer/3052638

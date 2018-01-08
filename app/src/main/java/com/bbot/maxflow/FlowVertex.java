@@ -231,8 +231,8 @@ public class FlowVertex implements Clickable {
         /* fit graph into screen: ONLY use when no more verts will be added */
         float shrink = 0.75f;
         //float x = ver.x, y = ver.y;     // Original System: original vertex coords
-        float x_c = shrink * (MainPanel.w / xrange) * (x - cx), x_y = shrink * (MainPanel.h / yrange) * (y - cy);    // C-System: scaled vertex coords with C as origin,
-        float shiftX = MainPanel.w / 2.0f - cx, shiftY = MainPanel.h / 2.0f - cy;  // shift vector to bring C-System into view
+        float x_c = shrink * (BasePanel.w / xrange) * (x - cx), x_y = shrink * (BasePanel.h / yrange) * (y - cy);    // C-System: scaled vertex coords with C as origin,
+        float shiftX = BasePanel.w / 2.0f - cx, shiftY = BasePanel.h / 2.0f - cy;  // shift vector to bring C-System into view
         float finalX = x_c + shiftX, finalY = x_y + shiftY;
         /*********************************************************************/
         fX = finalX;
