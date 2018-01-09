@@ -1,50 +1,61 @@
 package com.bbot.maxflow;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import java.io.File;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExplorerActivity extends Activity {
+
+public class ExplorerActivity extends AppCompatActivity implements FGEViewAdapter.ItemClickListener {
+
+    FGEViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explorer);
+        new dbLoader().execute(this);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvFlowGraphEntities);
+        int numberOfColumns = 3;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
+        adapter = new FGEViewAdapter(this, new ArrayList<FlowGraphEntity>());
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+    }
 
-        GridView gv = (GridView) findViewById(R.id.gv);
-        File[] files = getFilesDir().listFiles();
-        final List<String> fnames = new ArrayList<>();
-        System.out.println(getFilesDir().getPath());
-        for(File f : files) {
-            fnames.add(f.getName());
-            System.out.println(f.getName());
+    @Override
+    public void onItemClick(View view, int position) {
+        FlowGraphEntity chosen = adapter.getItem(position);
+        Intent intent = new Intent(this, SolverActivity.class);
+        intent.putExtra("serialized", chosen.getSerialized());
+        startActivity(intent);
+
+    }
+
+    private class dbLoader extends AsyncTask<Context, Void, Void> {
+        List<FlowGraphEntity> data;
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.setData(data);
+            adapter.notifyDataSetChanged();
         }
-        fnames.add("hello");
-        fnames.add("hello");
-        fnames.add("hello");
-        fnames.add("hello");
-        fnames.add("hello");
-        fnames.add("hello");
 
-        System.out.println( getResources().getIdentifier("sample_graph.txt","Graphs",getPackageName())
-        );
-        final ArrayAdapter<String> gridViewArrayAdapter = new ArrayAdapter<String>
-                (this,android.R.layout.simple_list_item_1, fnames);
-        gv.setAdapter(gridViewArrayAdapter);
-        gridViewArrayAdapter.notifyDataSetChanged();
-//        Button btn = (Button) findViewById(R.id.open_btn);
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-
-
+        @Override
+        protected Void doInBackground(Context... context) {
+            this.data = AppDatabase.getInstance(context[0]).flowGraphEntityDao().getAll();
+            for (FlowGraphEntity d: data)
+                System.out.println(d.getName());
+            return null;
+        }
     }
 }

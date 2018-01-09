@@ -78,7 +78,7 @@ public class FlowVertex implements Clickable {
             if (_id == null)
                 throw new NullPointerException("null vertex id");
             else if (_id.isEmpty() || _id.contains("-"))
-                throw new IllegalArgumentException("invalid vertex id");
+                throw new IllegalArgumentException("invalid vertex id. Can't be empty or contain '-'");
         } catch (Exception e) {
             // Todo
             // assign default id to vertex??

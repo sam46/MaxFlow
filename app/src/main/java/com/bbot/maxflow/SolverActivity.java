@@ -13,7 +13,12 @@ public class SolverActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(new SolverPanel(this,""));
+        Bundle bundle = getIntent().getExtras();
+        String serialized = "";
+        if (bundle != null)
+            serialized = bundle.getString("serialized");
+        System.out.println(serialized);
+        setContentView(new SolverPanel(this, serialized));
     }
 
 }

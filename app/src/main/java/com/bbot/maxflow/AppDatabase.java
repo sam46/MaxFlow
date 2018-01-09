@@ -9,63 +9,42 @@ import android.support.annotation.NonNull;
 
 @Database(entities = {FlowGraphEntity.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
-
     private static AppDatabase sInstance;
-
     public static final String DATABASE_NAME = "maxflow";
-
     public abstract FlowGraphEntityDao flowGraphEntityDao();
 
-    private Boolean mIsDatabaseCreated = false;
-
-    public static AppDatabase getInstance(final Context context) {
+    public static AppDatabase getInstance(Context appContext) {
+        boolean doPopluate = ! appContext.getDatabasePath(DATABASE_NAME).exists();
+        
         if (sInstance == null) {
-            synchronized (AppDatabase.class) {
-                if (sInstance == null) {
-                    sInstance = buildDatabase(context.getApplicationContext());
-                    sInstance.updateDatabaseCreated(context.getApplicationContext());
+            sInstance = Room.databaseBuilder(appContext, AppDatabase.class, DATABASE_NAME).addCallback(new Callback() {
+                @Override
+                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                    super.onCreate(db);
+                    System.out.println("Created db !!");
+
                 }
-            }
+            }).build();
+            if (doPopluate)
+                populate(appContext);
         }
         return sInstance;
     }
 
     /**
-     * Build the database. {@link Builder#build()} only sets up the database configuration and
-     * creates a new instance of the database.
-     * The SQLite database is only created when it's accessed for the first time.
+     * Populate app's database with pre-built graphs.
+     * Will only run once upon first app run or if the database is manually deleted from filesystem
+     *
+     * @param appContext
      */
-    private static AppDatabase buildDatabase(final Context appContext) {
-        return Room.databaseBuilder(appContext, AppDatabase.class, DATABASE_NAME)
-                .addCallback(new Callback() {
-                    @Override
-                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                        super.onCreate(db);
-                            AppDatabase database = AppDatabase.getInstance(appContext);
-
-                            // notify that the database was created and it's ready to be used
-                            final String sample_graph_str = appContext.getResources().getString(R.string.sample_graph);
-                            final FlowGraphEntity sample_fge = new FlowGraphEntity("sample graph", sample_graph_str);
-                            database.flowGraphEntityDao().insertAll(sample_fge);
-                            database.setDatabaseCreated();
-                    }
-                }).build();
+    private static void populate(Context appContext) {
+        System.out.println("Populating database...");
+        final int n = 1;
+        FlowGraphEntity [] fges = new FlowGraphEntity[n];
+        final String sample_graph_str = appContext.getResources().getString(R.string.sample_graph);
+        for (int i = 0; i < n; i++)
+            fges[i] = new FlowGraphEntity("sample graph " + (i+1), sample_graph_str);
+        sInstance.flowGraphEntityDao().insertAll(fges);
     }
 
-    /**
-     * Check whether the database already exists and expose it via {@link #getDatabaseCreated()}
-     */
-    private void updateDatabaseCreated(final Context context) {
-        if (context.getDatabasePath(DATABASE_NAME).exists()) {
-            setDatabaseCreated();
-        }
-    }
-
-    private void setDatabaseCreated(){
-        mIsDatabaseCreated = true;
-    }
-
-    public Boolean getDatabaseCreated() {
-        return mIsDatabaseCreated;
-    }
 }

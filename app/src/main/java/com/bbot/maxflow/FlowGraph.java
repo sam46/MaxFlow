@@ -26,7 +26,7 @@ public class FlowGraph {
     private Map<String, FlowVertex> verts;
     private Map<String, FlowEdge> edges;
     private FlowVertex src, sink;
-    private int n;
+    private int n = 0;
     private float xrange, yrange;
     private float cx, cy;
     /*  Ford-Fulkerson Stuff  */
@@ -57,13 +57,14 @@ public class FlowGraph {
         try {
             StringTokenizer reader = new StringTokenizer(serialized, "\n", false);
             StringTokenizer st = new StringTokenizer(reader.nextToken());
-            n = Integer.parseInt(st.nextToken());
-            int edgeNum = Integer.parseInt(st.nextToken());
-            for (int i = 0; i < n; ++i) {
+            final int N = Integer.parseInt(st.nextToken());
+            final int N_EDGES = Integer.parseInt(st.nextToken());
+            for (int i = 0; i < N; ++i) {
                 st = new StringTokenizer(reader.nextToken());
                 addNode(st.nextToken(), Float.parseFloat(st.nextToken()), Float.parseFloat(st.nextToken()));
             }
-            for (int i = 0; i < edgeNum; ++i) {
+            fordNet = new FFFlowNetwork(n);
+            for (int i = 0; i < N_EDGES; ++i) {
                 st = new StringTokenizer(reader.nextToken());
                 String u = st.nextToken(), v = st.nextToken();
 //                if(!verts.containsKey(u) || !verts.containsKey(v)) throw new Exception();
@@ -75,12 +76,12 @@ public class FlowGraph {
 
         } catch (Exception e) {
             // Todo
+            System.out.println("Error in deserialization !!");
         }
 
         /* compute and store flow steps/states */
         FordFulkerson ford;
         try {
-
             ford = new FordFulkerson(fordNet, idToInt.get(src.getID()), idToInt.get(sink.getID()));
             while (ford.step(fordNet, idToInt.get(src.getID()), idToInt.get(sink.getID()))) {
                 maxStateNum++;
@@ -109,7 +110,7 @@ public class FlowGraph {
     /**
      * Actual on-screen interactive graph
      *
-     * @param auto Generate a random auto-layed-out graph or use default sample graph
+     * @param auto Generate a random auto-layedout graph or use default sample graph
      */
     FlowGraph(boolean auto, String name) {
         maxY = Double.MIN_VALUE;
@@ -118,7 +119,6 @@ public class FlowGraph {
         maxX = maxY;
         verts = new HashMap<>();
         edges = new HashMap<>();
-        n = 0;
         fordNet = new FFFlowNetwork(n);
 
         if (auto) setupAuto();
@@ -126,7 +126,6 @@ public class FlowGraph {
         /* compute and store flow steps/states */
         FordFulkerson ford;
         try {
-
             ford = new FordFulkerson(fordNet, idToInt.get(src.getID()), idToInt.get(sink.getID()));
             while (ford.step(fordNet, idToInt.get(src.getID()), idToInt.get(sink.getID()))) {
                 maxStateNum++;
@@ -228,10 +227,10 @@ public class FlowGraph {
         FlowVertex fv = new FlowVertex(id);
         fv.x = x;
         fv.y = y;
-        n = verts.size();
         verts.put(id, fv);
         idToInt.put(id, curV);
         intToId.put(curV++, id);
+        n = verts.size();
     }
 
     /**
@@ -243,9 +242,9 @@ public class FlowGraph {
     private void addNode(String id, Diagram dg) {
         FlowVertex fv = new FlowVertex(id, dg);
         verts.put(id, fv);
-        n = verts.size();
         idToInt.put(id, curV);
         intToId.put(curV++, id);
+        n = verts.size();
     }
 
     public FlowVertex addVertex(float x, float y) {
@@ -262,7 +261,7 @@ public class FlowGraph {
     }
 
     public FlowEdge addEdge(FlowVertex u, FlowVertex v) {
-        // Todo: check u, v are part of this graph?
+        // Todo: check u, v are actually part of this graph?
 
         // Note: DON'T call any of the private addEdge() methods, they're intended for use with final graphs only
 
@@ -327,6 +326,8 @@ public class FlowGraph {
 //    }
 
     public void draw(Canvas canvas, boolean fit) {
+        // Todo: optimize all draw/update methods
+
         for (String key : verts.keySet()) {
             if (fit) verts.get(key).drawFit(canvas, focusElem, xrange, yrange, cx, cy);
             else verts.get(key).draw(canvas, focusElem);
@@ -416,6 +417,23 @@ public class FlowGraph {
         n = verts.size();
     }
 
+    /**
+     * Get a compact String representation of this graph.<br/><br/>
+     * Format:<br/>lines containing space-separated tokens:<br/>
+     * <p><b>
+     *  (# of nodes) (# of edges)<br/>
+     *  (node id) (x) (y)<br/>
+     *  ...<br/>
+     *  (node id) (x) (y)<br/>
+     *  (node id) (node id) (capacity)<br/>
+     *  ...<br/>
+     *  (node id) (node id) (capacity)<br/>
+     * </b></p>
+     * <br/>
+     * node id's don't contain '-'<br/>
+     *
+     * @return Serialized FlowGraph
+     */
     public String serialize() {
         String tmp = "";
         for (String k : verts.keySet()) {
