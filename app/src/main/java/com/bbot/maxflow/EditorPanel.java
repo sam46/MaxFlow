@@ -1,33 +1,49 @@
 package com.bbot.maxflow;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import android.widget.Toast;
+
 public class EditorPanel extends BasePanel {
     public EditText etext;
+    boolean saved = false;
     Bitmap clearBmp, deleteBmp, addEdgeBmp, saveBmp, setSinkBmp, setSrcBmp, changeCapBmp;
     RectF clearRect, deleteRect, addEdgeRect, saveRect, setSinkRect, setSrcRect, changeCapRect;
     boolean enableClearBtn = false, enableDeleteBtn = false, enableAddEdgeBtn = false, enableSaveBtn = false,
             enableSetSinkBtn = false, enableSetSrcBtn = false, enableChangeCapBtn = false,
             edgeMode = false;
     Clickable selected = null;
+    Paint paintDim;
 
     public EditorPanel(Context context) {
         super(context);
         System.out.println("Create!!");
+        paintDim = new Paint();
+        paintDim.setAlpha(120);
+//        paintDim.setColorFilter(new LightingColorFilter(0xFF7F7F7F, 0x00000000));
+        //ColorFilter filter = new LightingColorFilter(0xFFFFFFFF , 0x00222222); // lighten
+//        paintDim.setColorFilter(PorterDuff.Mode.LIGHTEN);
         graph = new FlowGraph(false);
         etext = new EditText(context);
         setupEditText();
@@ -149,7 +165,6 @@ public class EditorPanel extends BasePanel {
         selected = null;
         enableClearBtn = !graph.isEmpty();
         enableAddEdgeBtn = graph.getVertCount() > 1;
-//        enableSaveBtn = ;
         enableDeleteBtn = false;
         enableSetSrcBtn = false;
         enableSetSinkBtn = false;
@@ -180,25 +195,35 @@ public class EditorPanel extends BasePanel {
         edgeMode = false;
     }
 
+    private void updateSaveEnabled() {
+        enableSaveBtn = graph.isSerializeReady();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         System.out.println("Editor touch event");
         super.onTouchEvent(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-
                 float x = event.getRawX(), y = event.getRawY();
                 synchronized (graph) {
                     if (enableClearBtn && clearRect.contains(x, y)) { // Non
                         deselect();
-                        graph = new FlowGraph(false);
+                        graph = new FlowGraph(false); // todo: take serialization fields into account
                         deselect();
-                        break;
-                    } else if (enableSaveBtn && saveRect.contains(x, y)) {   // Non
-                        break;
+                        updateSaveEnabled(); break;
+                    } else if (saveRect.contains(x, y)) {   // Save
+                        if (enableSaveBtn) {
+                            if (saved) save(null); // update
+                            else  // first save
+                                new SaveDialog().show();
+                        } else {
+                            Toast.makeText(getContext(), "Source and Sink nodes are not set", Toast.LENGTH_LONG).show();
+                        }
+                        updateSaveEnabled(); break;
                     } else if (enableAddEdgeBtn && addEdgeRect.contains(x, y)) {    // Non
                         edgeMode = true;
-                        break;
+                        updateSaveEnabled(); break;
                     } else if (enableDeleteBtn && deleteRect.contains(x, y)) { // Any
                         if (selected != null) {
                             if (selected instanceof FlowVertex)
@@ -206,18 +231,18 @@ public class EditorPanel extends BasePanel {
                             else graph.deleteEdge((FlowEdge) selected);
                         }
                         deselect();
-                        break;
+                        updateSaveEnabled(); break;
                     } else if (enableChangeCapBtn && changeCapRect.contains(x, y)) {  // Edge
                         edgeMode = false;
                         toggleEditText(true);
                         // the rest will be handled by edittext key listener
-                        break;
+                        updateSaveEnabled(); break;
                     } else if (enableSetSinkBtn && setSinkRect.contains(x, y)) {    // Vertex
                         graph.setSink((FlowVertex) (selected));
-                        break;
+                        updateSaveEnabled(); break;
                     } else if (enableSetSrcBtn && setSrcRect.contains(x, y)) {     // Vertex
                         graph.setSrc((FlowVertex) (selected));
-                        break;
+                        updateSaveEnabled(); break;
                     } else {
                         System.out.println("branch to else:");
                         float[] wrldPos = toWorldCoords(x, y);
@@ -244,7 +269,9 @@ public class EditorPanel extends BasePanel {
                             deselect();
                             selectEdge((FlowEdge) temp);
                         }
+                        updateSaveEnabled(); break;
                     }
+
                 }
         }
 
@@ -273,10 +300,80 @@ public class EditorPanel extends BasePanel {
             if (enableClearBtn) canvas.drawBitmap(clearBmp, null, clearRect, paint);
             if (enableDeleteBtn) canvas.drawBitmap(deleteBmp, null, deleteRect, paint);
             if (enableAddEdgeBtn) canvas.drawBitmap(addEdgeBmp, null, addEdgeRect, paint);
-            if (enableSaveBtn) canvas.drawBitmap(saveBmp, null, saveRect, paint);
             if (enableSetSrcBtn) canvas.drawBitmap(setSrcBmp, null, setSrcRect, paint);
             if (enableSetSinkBtn) canvas.drawBitmap(setSinkBmp, null, setSinkRect, paint);
             if (enableChangeCapBtn) canvas.drawBitmap(changeCapBmp, null, changeCapRect, paint);
+            canvas.drawBitmap(saveBmp, null, saveRect, enableSaveBtn? paint:paintDim);
+        }
+    }
+
+    private void save(String name) {
+        if (name != null)
+            graph.setName(name);
+        new AsyncTask<Context, Void, Void>() {
+            @Override
+            protected Void doInBackground(Context... contexts) {
+                try {
+                    FlowGraphEntity fge = graph.serialize();
+                    FlowGraphEntityDao dao = AppDatabase.getInstance(EditorPanel.this.getContext())
+                            .flowGraphEntityDao();
+                    if (dao.findById(fge.getId()) != null) {
+                        dao.updateAll(fge);
+                    }
+                    else {
+                        Long[] ids = dao.insertAll(fge);
+                        fge.setId((int)((long) ids[0]));
+                    }
+                    saved = true;
+                } catch (FlowGraph.NotSerializeReadyException exception) {
+                    Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                    System.out.println(exception.getMessage());
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Toast.makeText(getContext(), "Graph Saved!", Toast.LENGTH_SHORT).show();
+            }
+        }.execute(getContext()); // todo: thread pool?
+    }
+
+    private class SaveDialog extends Dialog implements View.OnClickListener {
+        public SaveDialog() {
+            super(EditorPanel.this.getContext());
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setContentView(R.layout.dialog_save);
+            Button yes = (Button) findViewById(R.id.btn_yes);
+            Button no = (Button) findViewById(R.id.btn_no);
+            yes.setOnClickListener(this);
+            no.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            EditText filename = (EditText) findViewById(R.id.et_filename);
+            switch (v.getId()) {
+                case R.id.btn_yes:
+                    if (filename.getText().toString().isEmpty())
+                        Toast.makeText(getContext(), "Can't be empty!", Toast.LENGTH_LONG).show();
+                    else {
+                        save(filename.getText().toString());
+                        dismiss();
+                    }
+                    break;
+                case R.id.btn_no:
+                    dismiss();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

@@ -23,6 +23,7 @@ public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
     private ScaleGestureDetector mScaleGestureDetector;
     private GestureDetectorCompat mGestureDetector;
     private RotationGestureDetector mRotationDetector;
+    private PanelThread thread;
     protected Paint paint;
     protected Camera cam;
     protected boolean fit = true;
@@ -121,7 +122,6 @@ public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     };
     //    Bitmap bmp;
-    private PanelThread thread;
 
     protected BasePanel(Context context) {
         super(context);

@@ -50,6 +50,7 @@ public class FlowGraphEntity {
     }
 
     public void setId(int id) {
+        System.out.println("dao: "+name+": "+this.id+" --> "+id);
         this.id = id;
     }
 

@@ -27,7 +27,7 @@ public interface FlowGraphEntityDao {
     void updateAll(FlowGraphEntity... fge);
 
     @Insert
-    void insertAll(FlowGraphEntity... fge);
+    Long[] insertAll(FlowGraphEntity... fge);
 
     @Delete
     void delete(FlowGraphEntity fge);

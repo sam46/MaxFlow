@@ -21,7 +21,9 @@ public class PanelThread extends Thread {
     public void setRunning(boolean arg){
         this.running = arg;
     }
-
+    public Boolean getRunning() {
+            return running;
+    }
     @Override
     public void run() {
 

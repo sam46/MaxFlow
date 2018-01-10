@@ -13,13 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.bbot.maxflow.AboutActivity">
+        <activity android:name=".AboutActivity">
             android:configChanges="keyboardHidden|orientation|screenSize"
         </activity>
-        <activity android:name="com.bbot.maxflow.SolverActivity">
+        <activity android:name=".SolverActivity">
             android:configChanges="keyboardHidden|orientation|screenSize"
         </activity>
-        <activity android:name="com.bbot.maxflow.EditorActivity">
+        <activity android:name=".EditorActivity">
             android:configChanges="keyboardHidden|orientation|screenSize"
         </activity>
         <!-- This meta-data tag is required to use Google Play Services. -->
@@ -28,7 +28,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.bbot.maxflow.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +40,7 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
-        <activity android:name="com.bbot.maxflow.ExplorerActivity"></activity>
+        <activity android:name=".ExplorerActivity" />
     </application>
 
 </manifest>

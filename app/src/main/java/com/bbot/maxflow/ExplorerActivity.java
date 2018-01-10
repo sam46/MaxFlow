@@ -23,7 +23,7 @@ public class ExplorerActivity extends AppCompatActivity implements FGEViewAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explorer);
-        new dbLoader().execute(this);
+        new dbLoader().execute(this);  // todo: thread pool?
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvFlowGraphEntities);
         int numberOfColumns = 3;
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
@@ -53,8 +53,10 @@ public class ExplorerActivity extends AppCompatActivity implements FGEViewAdapte
         @Override
         protected Void doInBackground(Context... context) {
             this.data = AppDatabase.getInstance(context[0]).flowGraphEntityDao().getAll();
-            for (FlowGraphEntity d: data)
-                System.out.println(d.getName());
+            for (FlowGraphEntity d: data) {
+                System.out.println(d.getId()+"  "+d.getName());
+                System.out.println(d.getSerialized());
+            }
             return null;
         }
     }

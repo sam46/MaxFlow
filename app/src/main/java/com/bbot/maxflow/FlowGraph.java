@@ -2,6 +2,7 @@ package com.bbot.maxflow;
 
 import android.graphics.Canvas;
 
+import java.io.NotSerializableException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,7 +152,7 @@ public class FlowGraph {
         n = verts.size();
         recompute();
 
-        this.serialized = new FlowGraphEntity(name, serialize());
+        this.serialized = new FlowGraphEntity(name, null);
     }
 
     public boolean isEmpty() {
@@ -434,8 +435,26 @@ public class FlowGraph {
      *
      * @return Serialized FlowGraph
      */
-    public String serialize() {
+
+    public boolean isSerializeReady() {
+        if (src != null && sink != null)
+            return verts.containsValue(src) && verts.containsValue(sink);
+        return false;
+    }
+
+    public static class NotSerializeReadyException extends Exception{
+        @Override
+        public String getMessage() {
+            return "Cannot serialize FlowGraph. Source or Sink vertices are not set!";
+        }
+    }
+
+    private String serializedStr() throws NotSerializeReadyException {
+        // todo: validate preconditions
+        if (!isSerializeReady())
+            throw new NotSerializeReadyException();
         String tmp = "";
+        tmp += verts.size() + " " + edges.size() + "\n";
         for (String k : verts.keySet()) {
             FlowVertex fv = verts.get(k);
             tmp += (fv.getID() + " " + (int) Math.round(fv.x) + " " + (int) Math.round(fv.y)) + "\n";
@@ -445,8 +464,23 @@ public class FlowGraph {
             FlowEdge fe = edges.get(k);
             tmp += (fe.u.getID() + " " + fe.v.getID() + " " + fe.getCapacity()) + "\n";
         }
+        tmp += src.getID() + " " + sink.getID();
 
         return tmp;
     }
 
+    public FlowGraphEntity serialize() throws NotSerializeReadyException {
+        this.serialized.setSerialized(serializedStr());
+        return this.serialized;
+    }
+
+    public void setName(String name) {
+        this.serialized.setName(name);
+    }
+
+
+    public FlowGraphEntity getEntity() {
+        // todo: return copy?
+        return this.serialized;
+    }
 }
