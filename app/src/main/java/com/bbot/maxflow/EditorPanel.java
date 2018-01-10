@@ -8,11 +8,13 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class EditorPanel extends BasePanel {
     public EditText etext;
@@ -22,12 +24,10 @@ public class EditorPanel extends BasePanel {
             enableSetSinkBtn = false, enableSetSrcBtn = false, enableChangeCapBtn = false,
             edgeMode = false;
     Clickable selected = null;
-    InputMethodManager im;
 
     public EditorPanel(Context context) {
         super(context);
         System.out.println("Create!!");
-
         graph = new FlowGraph(false);
         etext = new EditText(context);
         setupEditText();
@@ -35,14 +35,6 @@ public class EditorPanel extends BasePanel {
         setFocusableInTouchMode(true);
         requestFocus();
 
-//        this.setOnFocusChangeListener(new OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if(hasFocus) {
-//                    EditorPanel.this.toggleEditText(false);
-//                }
-//            }
-//        });
         fit = false;
         clearBmp = BitmapFactory.decodeResource(getResources(), R.drawable.garbage);
         deleteBmp = BitmapFactory.decodeResource(getResources(), R.drawable.clear);
@@ -80,7 +72,6 @@ public class EditorPanel extends BasePanel {
                 deselect selected stuff -->
                 select u ---> select v ---> add edge ---> select newly added edge
 
-
         clear button:
             tap: deselect, hide all buttons except clear, save
         save button
@@ -94,35 +85,29 @@ public class EditorPanel extends BasePanel {
         etext.setInputType(InputType.TYPE_CLASS_NUMBER);
         etext.setFocusable(true);
         etext.setFocusableInTouchMode(true);
+        etext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if (event != null && event.getAction() != KeyEvent.ACTION_DOWN) {
+                    return false;
+                } else if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || event == null
+                        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    System.out.println("ENTER PRESSED");
+
+                    // todo: validate input
+                    ((FlowEdge) (selected)).setCapacity(Integer.parseInt(""+textView.getText()));
+                    toggleEditText(false);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         toggleEditText(false);
-//        etext.setClickable(false);
-//        etext.setMovementMethod(null);
-//        etext.setKeyListener(null);
-
-//        etext.setOnFocusChangeListener(new OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                System.out.println("f changed");
-//                if(!hasFocus) {
-//                    EditorPanel.this.toggleEditText(false);
-//                    EditorPanel.this.requestFocus();
-//                }
-//            }
-//        });
-
-//        etext.setOnTouchListener(new OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-////                if(v instanceof EditorPanel) System.out.println("bam!!");
-//                System.out.println("etext touch event");
-//                return etext.isEnabled();
-//            }
-//        });
     }
 
     public void toggleEditText(boolean show) {
-//        showEtext = show;
         etext.setAlpha(show ? 1 : 0);
         etext.setEnabled(show);
         if (show) {
@@ -135,20 +120,9 @@ public class EditorPanel extends BasePanel {
             setFocusableInTouchMode(false);
 //            imm.hideSoftInputFromWindow(etext.getWindowToken(), 0);
         } else {
-
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(etext.getWindowToken(), 0);
         }
-
-//        if(show) etext.requestFocus();
-
-//        final  boolean SHOW = show;
-//            etext.setOnTouchListener(new OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    return SHOW;
-//                }
-//            });
 
     }
 
@@ -221,7 +195,6 @@ public class EditorPanel extends BasePanel {
                         deselect();
                         break;
                     } else if (enableSaveBtn && saveRect.contains(x, y)) {   // Non
-
                         break;
                     } else if (enableAddEdgeBtn && addEdgeRect.contains(x, y)) {    // Non
                         edgeMode = true;
@@ -235,11 +208,9 @@ public class EditorPanel extends BasePanel {
                         deselect();
                         break;
                     } else if (enableChangeCapBtn && changeCapRect.contains(x, y)) {  // Edge
-//                        int cap = 0;
-//                        ((FlowEdge) (selected)).setCapacity(cap);
                         edgeMode = false;
                         toggleEditText(true);
-
+                        // the rest will be handled by edittext key listener
                         break;
                     } else if (enableSetSinkBtn && setSinkRect.contains(x, y)) {    // Vertex
                         graph.setSink((FlowVertex) (selected));
@@ -254,20 +225,19 @@ public class EditorPanel extends BasePanel {
                         if (temp == null) {
                             deselect();
                             System.out.println("  click nowhere");
-                        } else if (temp == selected) edgeMode = false;
-                        else if (temp instanceof FlowVertex) {
+                        } else if (temp == selected) {
+                            edgeMode = false;
+                        } else if (temp instanceof FlowVertex) {
                             if (edgeMode && selected != null && selected instanceof FlowVertex) {
                                 edgeMode = false;
-                                toggleEditText(true);
                                 selectEdge(graph.addEdge((FlowVertex) selected, (FlowVertex) temp));
-//                                System.out.println("  adding edge  " + (selected == null) + "  " + (temp == null));
+                                toggleEditText(true);
+                                // the rest will be handled by edittext key listener
                             } else {
-//                                System.out.println(" selecting vertex");
                                 if (edgeMode) {
                                     deselect();
                                     edgeMode = true;
                                 } else deselect();
-
                                 selectVertex((FlowVertex) temp);
                             }
                         } else {
@@ -290,7 +260,6 @@ public class EditorPanel extends BasePanel {
 
     @Override
     public void draw(Canvas canvas) {
-
         super.draw(canvas);
 //        System.out.println("Editor focused? "+hasFocus());
 //        System.out.println("etext focused? "+etext.hasFocus());
@@ -310,6 +279,5 @@ public class EditorPanel extends BasePanel {
             if (enableChangeCapBtn) canvas.drawBitmap(changeCapBmp, null, changeCapRect, paint);
         }
     }
-
 
 }

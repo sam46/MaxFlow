@@ -23,11 +23,15 @@ public class FlowVertex implements Clickable {
     public int Cin, Cout; // in and out total capacities
     private String id = "";  // can't be "" or contain '-'
     private AutoLayout.Node layoutNode;
+    private final Paint tPaint, paint;
+    private int red, green, blue;
 
     /**
      * Actual on-screen interactive node
      */
     public FlowVertex() {
+        tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     /**
@@ -37,6 +41,8 @@ public class FlowVertex implements Clickable {
      */
     public FlowVertex(String _id) {
         setID(_id);
+        tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     /**
@@ -48,6 +54,8 @@ public class FlowVertex implements Clickable {
     public FlowVertex(Diagram dg) {
         layoutNode = new Node();
         dg.AddNode(layoutNode);
+        tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     /**
@@ -61,6 +69,8 @@ public class FlowVertex implements Clickable {
         setID(_id);
         layoutNode = new Node();
         dg.AddNode(layoutNode);
+        tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     public String getID() {
@@ -93,8 +103,8 @@ public class FlowVertex implements Clickable {
     }
 
     public void removeEdge(FlowVertex fe) {
-        if(in.containsKey(fe.getID())) in.remove(fe.getID());
-        if(out.containsKey(fe.getID())) out.remove(fe.getID());
+        if (in.containsKey(fe.getID())) in.remove(fe.getID());
+        if (out.containsKey(fe.getID())) out.remove(fe.getID());
     }
 
     /**
@@ -148,12 +158,10 @@ public class FlowVertex implements Clickable {
     public void draw(Canvas canvas, Clickable focusElem) {
         boolean focus = focusElem == this;
 
-        Paint tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         tPaint.setColor(Color.WHITE);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int red = 255, green = 255, blue = 255;
         computeCapacities();
         double ratio = getBalanceRatio();
+        red = 255; green = 255; blue = 255;
         if (ratio < 0) {
             red = 255;
             green = 255 - (int) (-ratio * 255);
@@ -200,10 +208,8 @@ public class FlowVertex implements Clickable {
     public void drawFit(Canvas canvas, Clickable focusElem, float xrange, float yrange, float cx, float cy) {
         boolean focus = focusElem == this;
 
-        Paint tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         tPaint.setColor(Color.WHITE);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int red = 255, green = 255, blue = 255;
+        red = 255; green = 255; blue = 255;
         computeCapacities();
         double ratio = getBalanceRatio();
         if (ratio < 0) {
@@ -225,8 +231,6 @@ public class FlowVertex implements Clickable {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.rgb(red, green, blue));
         }
-
-
 
         /* fit graph into screen: ONLY use when no more verts will be added */
         float shrink = 0.75f;
@@ -262,8 +266,7 @@ public class FlowVertex implements Clickable {
 
     @Override
     public boolean collide(float x, float y) {
-
-        return ((x - this.x) * (x - this.x) + (y - this.y) * (y - this.y) < (this.r + 25) * (this.r + 25));
+        return (x - this.x) * (x - this.x) + (y - this.y) * (y - this.y) < (this.r + 25) * (this.r + 25);
     }
 
     @Override

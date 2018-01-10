@@ -39,9 +39,6 @@ public class EditorActivity extends Activity {
 
 
 
-
-
-
 //        EditorPanel ep = new EditorPanel(this);
 //        EditText et = (EditText) findViewById(R.id.editText);
 //        setContentView(ep);

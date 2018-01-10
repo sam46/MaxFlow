@@ -20,6 +20,8 @@ public class FlowEdge implements Clickable {
     private int flow = 0, preFlow = 0;
     private double[][] boundbox = new double[5][2];
     private EdgeStateNode curState = new EdgeStateNode();
+    private final Paint paint;
+    private final Paint tPaint;
 
     /**
      * Actual on-screen interactive edge.
@@ -30,6 +32,8 @@ public class FlowEdge implements Clickable {
 ////        focus = rand.nextFloat() < 0.3;
 //        capacity = rand.nextInt(10) + 5;
 //        flow = rand.nextInt(capacity);
+        paint = new Paint();
+        tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     /**
@@ -43,6 +47,8 @@ public class FlowEdge implements Clickable {
 //        flow = rand.nextInt(capacity);
 //        Random rand = new Random();
 //        focus = rand.nextFloat() < 0.3;
+        paint = new Paint();
+        tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     public void setCapacity(int cap) {
@@ -129,7 +135,6 @@ public class FlowEdge implements Clickable {
      */
     public void draw(Canvas canvas, Clickable focusElem) {
         boolean focus = focusElem == this;
-        Paint paint = new Paint();
         paint.setColor(Color.BLACK);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
@@ -211,7 +216,6 @@ public class FlowEdge implements Clickable {
         paint.setColor(BasePanel.bgColor);
         canvas.drawPath(txtBG, paint);
 
-        Paint tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         tPaint.setColor(Color.BLUE);
         tPaint.setTextSize(30);
         tPaint.setStyle(Paint.Style.FILL);

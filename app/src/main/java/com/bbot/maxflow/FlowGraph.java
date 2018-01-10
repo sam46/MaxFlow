@@ -392,7 +392,7 @@ public class FlowGraph {
     }
 
     public void highlight(Clickable obj) {
-        // Todo: check if callable belongs to this graph
+        // Todo: check if callable actually belongs to this graph
         focusElem = obj;
     }
 
