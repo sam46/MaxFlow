@@ -2,10 +2,13 @@ package com.bbot.maxflow;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class AboutActivity extends Activity {
-    
-    
+
     // clear icon: Icon made by Google from www.flaticon.com
     // tick-inside-circle:  Icon made by Google from www.flaticon.com
     // check-symbol: Icon made by Google from www.flaticon.com
@@ -24,5 +27,7 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        TextView abouttxt = (TextView) findViewById(R.id.txt_credits);
+        abouttxt.setText("MaxFlow\n\n Developer: BanishedBot https://github.com/sam46\n\n\n"+getResources().getString(R.string.copyrights));
     }
 }

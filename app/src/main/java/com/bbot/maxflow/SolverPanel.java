@@ -17,6 +17,7 @@ public class SolverPanel extends BasePanel {
         super(context);
         graph = new FlowGraph(serialized);
         fit = true;
+        HighlightAugPaths = true;
         prevBmp = BitmapFactory.decodeResource(getResources(), R.drawable.prev);
         nextBmp = BitmapFactory.decodeResource(getResources(), R.drawable.next);
         bmpW = prevBmp.getWidth();

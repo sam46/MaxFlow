@@ -26,7 +26,7 @@ public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
     private PanelThread thread;
     protected Paint paint;
     protected Camera cam;
-    protected boolean fit = true;
+    protected boolean fit = true, HighlightAugPaths = false;
 
     protected float[] toWorldCoords(float x, float y) {
         float[] mapPos = {0, 0};
@@ -70,6 +70,7 @@ public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             return super.onFling(e1, e2, velocityX, velocityY);
+            // todo
 //            float d = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY);
 //            velocityX /= d;
 //            velocityY /= d;
@@ -183,9 +184,8 @@ public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-//        canvas.drawColor(Color.WHITE);
         canvas.drawColor(BasePanel.bgColor);
-//        System.out.println(mat);
+
         canvas.save();
         canvas.setMatrix(cam.getMat());
 //        Paint paint = new Paint();
@@ -194,14 +194,12 @@ public class BasePanel extends SurfaceView implements SurfaceHolder.Callback {
 //        float[] p = cam.applyInverse(px, py);
 //        System.out.println(px+", "+py);
         synchronized (graph) {
-            graph.draw(canvas, fit);
+            graph.draw(canvas, HighlightAugPaths, fit);
         }
 //        canvas.drawBitmap(bmp, 0, 0, paint);
 //        RectF rect = new RectF(p[0] - r, p[1] - r, p[0] + r, p[1] + r);
 //        canvas.drawArc(rect, 0, 360, true, paint);
         canvas.restore();
-//        canvas.drawArc(rect, 0, 360, true, paint);
-
     }
 
     @Override

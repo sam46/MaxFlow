@@ -12,7 +12,6 @@ import java.util.List;
  * Actual on-screen interactive edge.
  */
 public class FlowEdge implements Clickable {
-    private static List<FlowEdge> states = new ArrayList<>();
     public FlowVertex u, v;     // convention: u --> v
     private int capacity = 0;
     boolean highlight = false;
@@ -20,8 +19,7 @@ public class FlowEdge implements Clickable {
     private int flow = 0, preFlow = 0;
     private double[][] boundbox = new double[5][2];
     private EdgeStateNode curState = new EdgeStateNode();
-    private final Paint paint;
-    private final Paint tPaint;
+    private final Paint paint, tPaint;
 
     /**
      * Actual on-screen interactive edge.
@@ -32,7 +30,7 @@ public class FlowEdge implements Clickable {
 ////        focus = rand.nextFloat() < 0.3;
 //        capacity = rand.nextInt(10) + 5;
 //        flow = rand.nextInt(capacity);
-        paint = new Paint();
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         tPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
@@ -76,7 +74,6 @@ public class FlowEdge implements Clickable {
         this.flow = curState.flow;
         this.highlight = curState.highlight;
         this.stateNum = curState.n;
-        System.out.println(getID()+":  "+this.preFlow+"   "+this.flow);
     }
 
     /**
@@ -193,10 +190,15 @@ public class FlowEdge implements Clickable {
         /****************************************/
 
         if (focus) {
+            System.out.println("focusing "+getID());
             paint.setStrokeWidth(8);
+            tPaint.setStrokeWidth(2);
             // shorten the line so it doesn't pop out of the arrow
             vx += 0.2 * v.r * backX;
             vy += 0.2 * v.r * backY;
+        } else {
+            paint.setStrokeWidth(1);
+            tPaint.setStrokeWidth(1);
         }
         canvas.drawLine(ux, uy, vx, vy, paint);
 //        System.out.println(ux+", "+uy + "  ----> "+vx+", "+vy);

@@ -2,6 +2,7 @@ package com.bbot.maxflow;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -112,7 +113,14 @@ public class EditorPanel extends BasePanel {
                     System.out.println("ENTER PRESSED");
 
                     // todo: validate input
-                    ((FlowEdge) (selected)).setCapacity(Integer.parseInt(""+textView.getText()));
+                    Integer cap = null;
+                    try {
+                         cap = Integer.parseInt(""+textView.getText());
+                    } catch (Exception e) {
+                        cap = 0;
+                        Toast.makeText(getContext(), "Invalid Edge Capacity!", Toast.LENGTH_SHORT).show();
+                    }
+                    ((FlowEdge) (selected)).setCapacity(cap);
                     toggleEditText(false);
                     return true;
                 }
@@ -161,7 +169,6 @@ public class EditorPanel extends BasePanel {
     }
 
     void deselect() {
-        System.out.println("deselect()");
         selected = null;
         enableClearBtn = !graph.isEmpty();
         enableAddEdgeBtn = graph.getVertCount() > 1;
@@ -201,7 +208,6 @@ public class EditorPanel extends BasePanel {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        System.out.println("Editor touch event");
         super.onTouchEvent(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -209,7 +215,7 @@ public class EditorPanel extends BasePanel {
                 synchronized (graph) {
                     if (enableClearBtn && clearRect.contains(x, y)) { // Non
                         deselect();
-                        graph = new FlowGraph(false); // todo: take serialization fields into account
+                        graph.clear();
                         deselect();
                         updateSaveEnabled(); break;
                     } else if (saveRect.contains(x, y)) {   // Save
@@ -244,12 +250,10 @@ public class EditorPanel extends BasePanel {
                         graph.setSrc((FlowVertex) (selected));
                         updateSaveEnabled(); break;
                     } else {
-                        System.out.println("branch to else:");
                         float[] wrldPos = toWorldCoords(x, y);
                         Clickable temp = graph.checkClick(wrldPos[0], wrldPos[1]);
                         if (temp == null) {
                             deselect();
-                            System.out.println("  click nowhere");
                         } else if (temp == selected) {
                             edgeMode = false;
                         } else if (temp instanceof FlowVertex) {

@@ -41,4 +41,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp" />
 
+    <Button
+        android:id="@+id/about_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/adView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="58dp"
+        android:text="About" />
+
 </RelativeLayout>

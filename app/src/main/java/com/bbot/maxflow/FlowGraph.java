@@ -326,7 +326,28 @@ public class FlowGraph {
 //        }
 //    }
 
-    public void draw(Canvas canvas, boolean fit) {
+    /**
+     *  Incompatible with auto layout and Ford-Fulkerson algorithm,
+     *  So don't use on final graphs
+     */
+    public void clear() {
+        verts.clear();
+        edges.clear();
+        src = null;
+        sink = null;
+        serialized.setSerialized(null);
+        n = 0;
+        focusElem = null;
+        fordNet = null;
+    }
+
+    /**
+     *
+     * @param canvas
+     * @param AugPathOrSelection true will highlight augmenting paths.<br> False will only highlight selected elements <br> When solving maxflow on a graph use "true"
+     * @param fit
+     */
+    public void draw(Canvas canvas, boolean AugPathOrSelection, boolean fit) {
         // Todo: optimize all draw/update methods
 
         for (String key : verts.keySet()) {
@@ -335,9 +356,8 @@ public class FlowGraph {
         }
 
         for (String key : edges.keySet()) {
-            edges.get(key).draw(canvas, focusElem);
-//            edges.get(key).draw(canvas);
-
+            if (AugPathOrSelection) edges.get(key).draw(canvas);
+            else edges.get(key).draw(canvas, focusElem);
         }
     }
 
@@ -479,8 +499,8 @@ public class FlowGraph {
     }
 
 
-    public FlowGraphEntity getEntity() {
-        // todo: return copy?
-        return this.serialized;
-    }
+//    public FlowGraphEntity getEntity() {
+//        // todo: return copy?
+//        return this.serialized;
+//    }
 }

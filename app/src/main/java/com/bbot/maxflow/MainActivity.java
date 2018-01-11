@@ -60,6 +60,15 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+
+        final Button aboutBTN = (Button) findViewById(R.id.about_btn);
+        aboutBTN.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

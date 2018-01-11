@@ -13,9 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
-
 public class EditorActivity extends Activity {
-
     EditorPanel editorPanel;
     FrameLayout lay;
 
@@ -30,14 +28,10 @@ public class EditorActivity extends Activity {
         FrameLayout.LayoutParams lparams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
         editorPanel.etext.setLayoutParams(lparams);
 
-
         lay.addView(editorPanel);
         lay.addView(editorPanel.etext);
 
         setContentView(lay);
-
-
-
 
 //        EditorPanel ep = new EditorPanel(this);
 //        EditText et = (EditText) findViewById(R.id.editText);
