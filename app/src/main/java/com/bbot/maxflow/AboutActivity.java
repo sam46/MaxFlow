@@ -2,10 +2,7 @@ package com.bbot.maxflow;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 public class AboutActivity extends Activity {
 

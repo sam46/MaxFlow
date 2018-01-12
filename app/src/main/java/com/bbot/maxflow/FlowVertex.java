@@ -27,6 +27,27 @@ public class FlowVertex implements Clickable {
     private int red, green, blue;
 
     /**
+     * Determine if this vertex is being force-drawn as sink or source
+     * @return 0 for auto (default), -1 for source, 1 for sink. <br> All other values are ignored!
+     */
+    public int isForceSinkOrSource() {
+        return forceSinkOrSource;
+    }
+
+    /**
+     * Used to force-draw this vertex as sink or source
+     * @param forceSinkOrSource 0 for auto (default), -1 for source, 1 for sink. <br> All other values are ignored!
+     */
+    public void setForceSinkOrSource(int forceSinkOrSource) {
+        if (forceSinkOrSource == 0 || forceSinkOrSource == 1 || forceSinkOrSource == -1)
+            this.forceSinkOrSource = forceSinkOrSource;
+    }
+
+    private int forceSinkOrSource;  // just for setting a color
+
+
+
+    /**
      * Actual on-screen interactive node
      */
     public FlowVertex() {
@@ -181,6 +202,15 @@ public class FlowVertex implements Clickable {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.rgb(red, green, blue));
         }
+        /* forced sink/src coloring */
+        if(this.forceSinkOrSource == -1) {
+            paint.setColor(Color.RED);
+            paint.setStrokeWidth(2);
+        }
+        else if(this.forceSinkOrSource == 1) {
+            paint.setColor(Color.BLUE);
+            paint.setStrokeWidth(2);
+        }
 
         /* Todo
         if(isSrcOrSink) {
@@ -193,6 +223,8 @@ public class FlowVertex implements Clickable {
             Paint tempPaint = new Paint();
             tempPaint.setStyle(Paint.Style.STROKE);
             tempPaint.setStrokeWidth(5);
+            if(this.forceSinkOrSource != 0) // forced sink/src coloring
+                tempPaint.setColor(paint.getColor());
             canvas.drawArc(rect, 0, 360, true, tempPaint);
         }
         tPaint.setTextSize(32);
@@ -231,6 +263,15 @@ public class FlowVertex implements Clickable {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.rgb(red, green, blue));
         }
+        /* forced sink/src coloring */
+        if(this.forceSinkOrSource == -1) {
+            paint.setColor(Color.RED);
+            paint.setStrokeWidth(2);
+        }
+        else if(this.forceSinkOrSource == 1) {
+            paint.setColor(Color.BLUE);
+            paint.setStrokeWidth(2);
+        }
 
         /* fit graph into screen: ONLY use when no more verts will be added */
         float shrink = 0.75f;
@@ -241,7 +282,6 @@ public class FlowVertex implements Clickable {
         /*********************************************************************/
         fX = finalX;
         fY = finalY;
-
 
         /* Todo
         if(isSrcOrSink) {
@@ -255,6 +295,8 @@ public class FlowVertex implements Clickable {
 //            Paint tempPaint  =new Paint();
 //            tempPaint.setStyle(Paint.Style.STROKE);
 //            tempPaint.setStrokeWidth(5);
+//            if(this.forceSinkOrSource != 0) // forced sink/src coloring
+//                 tempPaint.setColor(paint.getColor());
 //            canvas.drawArc(rect, 0, 360, true, tempPaint);
 //        }
         tPaint.setTextSize(32);

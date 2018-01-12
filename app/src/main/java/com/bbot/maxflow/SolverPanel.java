@@ -11,15 +11,17 @@ import android.view.SurfaceHolder;
 public class SolverPanel extends BasePanel {
     Bitmap prevBmp, nextBmp;
     RectF prevBtnRect, nextBtnRect;
-    float btnsOffset = 50, bmpW, bmpH, scl = 2;
+    float btnsOffset = 50, bmpW, bmpH, scl = 4;
+    boolean firstStep, lastStep;
 
     public SolverPanel(Context context, String serialized) {
         super(context);
         graph = new FlowGraph(serialized);
-        fit = true;
+        updateShowBtns();
+        fit = false;
         HighlightAugPaths = true;
-        prevBmp = BitmapFactory.decodeResource(getResources(), R.drawable.prev);
-        nextBmp = BitmapFactory.decodeResource(getResources(), R.drawable.next);
+        prevBmp = BitmapFactory.decodeResource(getResources(), R.drawable.keyboard_left_arrow_button);
+        nextBmp = BitmapFactory.decodeResource(getResources(), R.drawable.keyboard_right_arrow_button);
         bmpW = prevBmp.getWidth();
         bmpH = prevBmp.getHeight();
         prevBtnRect = new RectF(btnsOffset, btnsOffset, btnsOffset + bmpW / scl, btnsOffset + bmpH / scl);
@@ -43,9 +45,11 @@ public class SolverPanel extends BasePanel {
                 float x = event.getRawX(), y = event.getRawY();
                 if (nextBtnRect.contains(x, y)) {
                     graph.stepForward();
+                    updateShowBtns();
                     break;
                 } else if (prevBtnRect.contains(x, y)) {
                     graph.stepBackward();
+                    updateShowBtns();
                     break;
                 }
 
@@ -61,7 +65,12 @@ public class SolverPanel extends BasePanel {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawBitmap(prevBmp, null, prevBtnRect, paint);
-        canvas.drawBitmap(nextBmp, null, nextBtnRect, paint);
+        if (! firstStep) canvas.drawBitmap(prevBmp, null, prevBtnRect, paint);
+        if (! lastStep) canvas.drawBitmap(nextBmp, null, nextBtnRect, paint);
+    }
+
+    private void updateShowBtns() {
+        firstStep = graph.getStateNum() == 0;
+        lastStep = graph.getMaxStateNum() == graph.getStateNum();
     }
 }

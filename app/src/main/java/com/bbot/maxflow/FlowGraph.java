@@ -35,7 +35,31 @@ public class FlowGraph {
     private Map<String, Integer> idToInt = new HashMap<>();
     private Map<Integer, String> intToId = new HashMap<>();
     private int curV = 0;
-    private int stateNum = 0, maxStateNum = 0;
+    private int stateNum = 0;
+
+    public boolean isForceDrawSinkSrc() {
+        return forceDrawSinkSrc;
+    }
+
+    /**
+     * Use to force color-coded draw of sink and source
+     * @param forceDrawSinkSrc
+     */
+     public void setForceDrawSinkSrc(boolean forceDrawSinkSrc) {
+        this.forceDrawSinkSrc = forceDrawSinkSrc;
+    }
+
+    private boolean forceDrawSinkSrc = false;
+
+    public int getStateNum() {
+        return stateNum;
+    }
+
+    public int getMaxStateNum() {
+        return maxStateNum;
+    }
+
+    private int maxStateNum = 0;
 
     FlowGraph(String serialized) {
         this(serialized, "unnamed");
@@ -349,6 +373,11 @@ public class FlowGraph {
      */
     public void draw(Canvas canvas, boolean AugPathOrSelection, boolean fit) {
         // Todo: optimize all draw/update methods
+
+        if (src != null)
+            src.setForceSinkOrSource(forceDrawSinkSrc? -1:0);
+        if (sink != null)
+            sink.setForceSinkOrSource(forceDrawSinkSrc? 1:0);
 
         for (String key : verts.keySet()) {
             if (fit) verts.get(key).drawFit(canvas, focusElem, xrange, yrange, cx, cy);

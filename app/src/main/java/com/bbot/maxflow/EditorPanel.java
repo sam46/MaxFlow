@@ -2,7 +2,6 @@ package com.bbot.maxflow;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -46,6 +45,7 @@ public class EditorPanel extends BasePanel {
         //ColorFilter filter = new LightingColorFilter(0xFFFFFFFF , 0x00222222); // lighten
 //        paintDim.setColorFilter(PorterDuff.Mode.LIGHTEN);
         graph = new FlowGraph(false);
+        graph.setForceDrawSinkSrc(true);
         etext = new EditText(context);
         setupEditText();
         setFocusable(true);
@@ -57,18 +57,19 @@ public class EditorPanel extends BasePanel {
         deleteBmp = BitmapFactory.decodeResource(getResources(), R.drawable.clear);
         addEdgeBmp = BitmapFactory.decodeResource(getResources(), R.drawable.vector_diagonal_line_with_box_edges);
         saveBmp = BitmapFactory.decodeResource(getResources(), R.drawable.check_symbol);
-        setSrcBmp = BitmapFactory.decodeResource(getResources(), R.drawable.convergence);
-        setSinkBmp = BitmapFactory.decodeResource(getResources(), R.drawable.convergence);
+        setSrcBmp = BitmapFactory.decodeResource(getResources(), R.drawable.src);
+        setSinkBmp = BitmapFactory.decodeResource(getResources(), R.drawable.sink);
         changeCapBmp = BitmapFactory.decodeResource(getResources(), R.drawable.heart_meter);
 
         float btnOffset = 35 * 6, sep = 15, scl = 5, bmpW = clearBmp.getWidth(), bmpH = clearBmp.getHeight();
-        clearRect = new RectF(btnOffset + 1 * sep + 0 * bmpW / scl, btnOffset, btnOffset + 1 * sep + 1 * bmpW / scl, btnOffset + bmpH / scl);
-        deleteRect = new RectF(btnOffset + 3 * sep + 1 * bmpW / scl, btnOffset, btnOffset + 3 * sep + 2 * bmpW / scl, btnOffset + bmpH / scl);
-        addEdgeRect = new RectF(btnOffset + 5 * sep + 2 * bmpW / scl, btnOffset, btnOffset + 5 * sep + 3 * bmpW / scl, btnOffset + bmpH / scl);
-        saveRect = new RectF(btnOffset + 7 * sep + 3 * bmpW / scl, btnOffset, btnOffset + 7 * sep + 4 * bmpW / scl, btnOffset + bmpH / scl);
-        setSrcRect = new RectF(btnOffset + 9 * sep + 4 * bmpW / scl, btnOffset, btnOffset + 9 * sep + 5 * bmpW / scl, btnOffset + bmpH / scl);
-        setSinkRect = new RectF(btnOffset + 11 * sep + 5 * bmpW / scl, btnOffset, btnOffset + 11 * sep + 6 * bmpW / scl, btnOffset + bmpH / scl);
-        changeCapRect = new RectF(btnOffset + 13 * sep + 6 * bmpW / scl, btnOffset, btnOffset + 13 * sep + 7 * bmpW / scl, btnOffset + bmpH / scl);
+        float top = 35*2;
+        clearRect = new RectF(btnOffset + 1 * sep + 0 * bmpW / scl, top, btnOffset + 1 * sep + 1 * bmpW / scl, top + bmpH / scl);
+        deleteRect = new RectF(btnOffset + 3 * sep + 1 * bmpW / scl, top, btnOffset + 3 * sep + 2 * bmpW / scl, top + bmpH / scl);
+        addEdgeRect = new RectF(btnOffset + 5 * sep + 2 * bmpW / scl, top, btnOffset + 5 * sep + 3 * bmpW / scl, top + bmpH / scl);
+        saveRect = new RectF(btnOffset + 7 * sep + 3 * bmpW / scl, top, btnOffset + 7 * sep + 4 * bmpW / scl, top + bmpH / scl);
+        setSrcRect = new RectF(btnOffset + 9 * sep + 4 * bmpW / scl, top, btnOffset + 9 * sep + 5 * bmpW / scl, top + bmpH / scl);
+        setSinkRect = new RectF(btnOffset + 11 * sep + 5 * bmpW / scl, top, btnOffset + 11 * sep + 6 * bmpW / scl, top + bmpH / scl);
+        changeCapRect = new RectF(btnOffset + 13 * sep + 6 * bmpW / scl, top, btnOffset + 13 * sep + 7 * bmpW / scl, top + bmpH / scl);
 
     /*
         whitespace:
