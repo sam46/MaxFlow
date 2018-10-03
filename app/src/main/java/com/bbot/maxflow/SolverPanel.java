@@ -20,7 +20,7 @@ public class SolverPanel extends BasePanel {
         updateShowBtns();
         fit = false;
         HighlightAugPaths = true;
-        prevBmp = BitmapFactory.decodeResource(getResources(), R.drawable.keyboard_left_arrow_button);
+        prevBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_keyboard_arrow_left_black_24dp);
         nextBmp = BitmapFactory.decodeResource(getResources(), R.drawable.keyboard_right_arrow_button);
         bmpW = prevBmp.getWidth();
         bmpH = prevBmp.getHeight();
